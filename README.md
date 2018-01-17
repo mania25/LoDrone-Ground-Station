@@ -60,7 +60,7 @@ make
 
 If everything works fine, an executable namely `rf95_client` will be created.
 
-### Running the gateway
+### Running the client
 
 ```bash
 sudo ./rf95_client
