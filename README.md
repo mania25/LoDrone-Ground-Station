@@ -53,15 +53,15 @@ gpio -v
 Clone this repository, and build it by simply running:
 
 ```bash
-git clone https://github.com/mania25/LoDrone-Server
-cd LoDrone-Server
+git clone https://github.com/mania25/LoDrone-Ground-Station
+cd LoDrone-Ground-Station
 make
 ```
 
-If everything works fine, an executable namely `rf95_server` will be created.
+If everything works fine, an executable namely `rf95_client` will be created.
 
 ### Running the gateway
 
 ```bash
-sudo ./rf95_server
+sudo ./rf95_client
 ```
