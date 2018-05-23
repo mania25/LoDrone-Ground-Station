@@ -34,7 +34,7 @@
 
 // LoRasPi board
 // see https://github.com/hallard/LoRasPI
-#define BOARD_DYCODEX
+// #define BOARD_LORASPI
 
 // iC880A and LinkLab Lora Gateway Shield (if RF module plugged into)
 // see https://github.com/ch2i/iC880A-Raspberry-PI
@@ -47,6 +47,15 @@
 // Dragino Raspberry PI hat
 // see https://github.com/dragino/Lora
 //#define BOARD_DRAGINO_PIHAT
+
+// DycodeX LoRa Raspberry PI hat
+// =========================================
+// see https://github.com/dycodex/LoRa-Raspberry-Pi-Hat
+// #define BOARD_DYCODEX
+
+// DycodeX LoRa Raspberry PI hat V2
+// =========================================
+#define BOARD_DYCODEX_V2
 
 // Now we include RasPi_Boards.h so this will expose defined
 // constants with CS/IRQ/RESET/on board LED pins definition
@@ -64,7 +73,7 @@ RH_RF95 rf95(RF_CS_PIN, RF_IRQ_PIN);
 // Flag for Ctrl-C
 volatile sig_atomic_t force_exit = false;
 
-const std::string SERVtER_ADDRESS("tcp://localhost:1883");
+const std::string SERVER_ADDRESS("tcp://localhost:1883");
 const std::string CLIENT_ID{"transmitter"};
 const std::string TOPIC{"/controlling-drone"};
 
