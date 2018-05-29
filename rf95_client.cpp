@@ -222,9 +222,6 @@ int main(int argc, const char *argv[]) {
       while (!force_exit) {
         auto msg = cli.consume_message();
 
-        // printf( "millis()=%ld last=%ld diff=%ld\n", millis() , last_millis,
-        // millis() - last_millis );
-
         if (!msg) {
           if (!cli.is_connected()) {
             cout << "Lost connection. Attempting reconnect" << endl;
@@ -240,16 +237,11 @@ int main(int argc, const char *argv[]) {
             break;
         }
 
-        // Send every 5 seconds
-        // if (millis() - last_millis > 5000) {
-        //   last_millis = millis();
-
-        // }
-
 #ifdef RF_LED_PIN
         led_blink = millis();
         digitalWrite(RF_LED_PIN, HIGH);
 #endif
+
         vector<uint8_t> dataVector(msg->to_string().begin(), msg->to_string().end());
         uint8_t *data = &dataVector[0];
         uint8_t len = (uint8_t)strlen(msg->to_string().c_str());
@@ -262,8 +254,6 @@ int main(int argc, const char *argv[]) {
 
         cout << msg->get_topic() << ": " << msg->to_string() << endl;
 
-        // Begin the main body of code
-
 #ifdef RF_LED_PIN
         // Led blink timer expiration ?
         if (led_blink && millis() - led_blink > 200) {
@@ -274,7 +264,7 @@ int main(int argc, const char *argv[]) {
 
         // Let OS doing other tasks
         // Since we do nothing until each 5 sec
-        bcm2835_delay(100);
+        bcm2835_delay(5);
       }
       cout << "\nDisconnecting from the MQTT server..." << flush;
       cli.disconnect();
