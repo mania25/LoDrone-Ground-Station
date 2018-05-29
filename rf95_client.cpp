@@ -240,9 +240,9 @@ int main(int argc, const char *argv[]) {
   digitalWrite(RF_LED_PIN, HIGH);
 #endif
 
-      vector < uint8_t > dataVector(msg - > to_string().begin(), msg - > to_string().end());
-      uint8_t * data = & dataVector[0];
-      uint8_t len = (uint8_t) strlen(msg - > to_string().c_str());
+      vector <uint8_t> dataVector(msg->to_string().begin(), msg->to_string().end());
+      uint8_t *data = &dataVector[0];
+      uint8_t len = (uint8_t)strlen(msg->to_string().c_str());
 
       printf("Sending %02d bytes to node #%d => ", len, RF_GATEWAY_ID);
       printbuffer(data, len);
@@ -250,7 +250,7 @@ int main(int argc, const char *argv[]) {
       rf95.send(data, len);
       rf95.waitPacketSent();
 
-      cout << msg - > get_topic() << ": " << msg - > to_string() << endl;
+      cout << msg->get_topic() << ": " << msg->to_string() << endl;
 
 #ifdef RF_LED_PIN
   // Led blink timer expiration ?
@@ -264,7 +264,7 @@ int main(int argc, const char *argv[]) {
       // Since we do nothing until each 5 sec
       bcm2835_delay(5);
     }
-    
+
     cout << "\nDisconnecting from the MQTT server..." << flush;
     cli.disconnect();
     cout << "OK" << endl;
