@@ -211,68 +211,70 @@ int main(int argc, const char *argv[]) {
 
     last_millis = millis();
 
-    try {
-      cout << "Connecting to the MQTT server..." << flush;
-      cli.connect(connOpts);
-      cli.subscribe(TOPIC, QOS);
-      cout << "OK\n" << endl;
+    cout << "Connecting to the MQTT server..." << flush;
+    cli.connect(connOpts);
+    cli.subscribe(TOPIC, QOS);
+    cout << "OK\n" << endl;
 
-      // Consume messages
+    // Consume messages
+    while (!force_exit) {
+      auto msg = cli.consume_message();
 
-      while (!force_exit) {
-        auto msg = cli.consume_message();
-
-        if (!msg) {
-          if (!cli.is_connected()) {
-            cout << "Lost connection. Attempting reconnect" << endl;
-            if (try_reconnect(cli)) {
-              cli.subscribe(TOPIC, QOS);
-              cout << "Reconnected" << endl;
-              continue;
-            } else {
-              cout << "Reconnect failed." << endl;
-              break;
-            }
-          } else
+      if (!msg) {
+        if (!cli.is_connected()) {
+          cout << "Lost connection. Attempting reconnect" << endl;
+          if (try_reconnect(cli)) {
+            cli.subscribe(TOPIC, QOS);
+            cout << "Reconnected" << endl;
+            continue;
+          } else {
+            cout << "Reconnect failed." << endl;
             break;
-        }
-
-#ifdef RF_LED_PIN
-        led_blink = millis();
-        digitalWrite(RF_LED_PIN, HIGH);
-#endif
-
-        vector<uint8_t> dataVector(msg->to_string().begin(), msg->to_string().end());
-        uint8_t *data = &dataVector[0];
-        uint8_t len = (uint8_t)strlen(msg->to_string().c_str());
-
-        printf("Sending %02d bytes to node #%d => ", len, RF_GATEWAY_ID);
-        printbuffer(data, len);
-        printf("\n");
-        rf95.send(data, len);
-        rf95.waitPacketSent();
-
-        cout << msg->get_topic() << ": " << msg->to_string() << endl;
-
-#ifdef RF_LED_PIN
-        // Led blink timer expiration ?
-        if (led_blink && millis() - led_blink > 200) {
-          led_blink = 0;
-          digitalWrite(RF_LED_PIN, LOW);
-        }
-#endif
-
-        // Let OS doing other tasks
-        // Since we do nothing until each 5 sec
-        bcm2835_delay(5);
+          }
+        } else
+          break;
       }
-      cout << "\nDisconnecting from the MQTT server..." << flush;
-      cli.disconnect();
-      cout << "OK" << endl;
-    } catch (const mqtt::exception &exc) {
-      cerr << exc.what() << endl;
-      return 1;
+
+#ifdef RF_LED_PIN
+  led_blink = millis();
+  digitalWrite(RF_LED_PIN, HIGH);
+#endif
+
+      vector < uint8_t > dataVector(msg - > to_string().begin(), msg - > to_string().end());
+      uint8_t * data = & dataVector[0];
+      uint8_t len = (uint8_t) strlen(msg - > to_string().c_str());
+
+      printf("Sending %02d bytes to node #%d => ", len, RF_GATEWAY_ID);
+      printbuffer(data, len);
+      printf("\n");
+      rf95.send(data, len);
+      rf95.waitPacketSent();
+
+      cout << msg - > get_topic() << ": " << msg - > to_string() << endl;
+
+#ifdef RF_LED_PIN
+  // Led blink timer expiration ?
+  if (led_blink && millis() - led_blink > 200) {
+    led_blink = 0;
+    digitalWrite(RF_LED_PIN, LOW);
+  }
+#endif
+
+      // Let OS doing other tasks
+      // Since we do nothing until each 5 sec
+      bcm2835_delay(5);
     }
+    
+    cout << "\nDisconnecting from the MQTT server..." << flush;
+    cli.disconnect();
+    cout << "OK" << endl;
+
+    // try {
+      
+    // } catch (const mqtt::exception &exc) {
+    //   cerr << exc.what() << endl;
+    //   return 1;
+    // }
   }
 
 #ifdef RF_LED_PIN
