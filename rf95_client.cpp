@@ -114,6 +114,14 @@ void sig_handler(int sig) {
   cli.disconnect();
   cout << "OK" << endl;
 
+#ifdef RF_LED_PIN
+  digitalWrite(RF_LED_PIN, LOW);
+#endif
+  printf("\n%s Ending\n", __BASEFILE__);
+  bcm2835_close();
+  return 0;
+}
+
   std::exit(0);
 }
 
@@ -276,11 +284,3 @@ int main(int argc, const char *argv[]) {
       return 1;
     }
   }
-
-#ifdef RF_LED_PIN
-  digitalWrite(RF_LED_PIN, LOW);
-#endif
-  printf("\n%s Ending\n", __BASEFILE__);
-  bcm2835_close();
-  return 0;
-}
