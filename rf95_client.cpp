@@ -84,6 +84,15 @@ const std::string password =
 
 const int QOS = 1;
 
+mqtt::connect_options connOpts;
+connOpts.set_keep_alive_interval(20);
+connOpts.set_clean_session(true);
+
+connOpts.set_user_name(user.c_str());
+connOpts.set_password(password.c_str());
+
+mqtt::client cli(SERVER_ADDRESS, CLIENT_ID);
+
 using namespace std;
 using namespace std::chrono;
 
@@ -107,6 +116,12 @@ bool try_reconnect(mqtt::client &cli) {
 void sig_handler(int sig) {
   printf("\n%s Break received, exiting!...\n", __BASEFILE__);
   force_exit = true;
+
+  cout << "\nDisconnecting from the MQTT server..." << flush;
+  cli.disconnect();
+  cout << "OK" << endl;
+
+  std::exit(0);
 }
 
 // Main Function
@@ -155,15 +170,6 @@ int main(int argc, const char *argv[]) {
     fprintf(stderr, "\nRF95 module init failed, Please verify wiring/module\n");
   } else {
     printf("\nRF95 module seen OK!\r\n");
-
-    mqtt::connect_options connOpts;
-    connOpts.set_keep_alive_interval(20);
-    connOpts.set_clean_session(true);
-
-    connOpts.set_user_name(user.c_str());
-    connOpts.set_password(password.c_str());
-
-    mqtt::client cli(SERVER_ADDRESS, CLIENT_ID);
 
 #ifdef RF_IRQ_PIN
     // Since we may check IRQ line with bcm_2835 Rising edge detection
@@ -266,10 +272,6 @@ int main(int argc, const char *argv[]) {
         // Since we do nothing until each 5 sec
         bcm2835_delay(5);
       }
-
-      cout << "\nDisconnecting from the MQTT server..." << flush;
-      cli.disconnect();
-      cout << "OK" << endl;
     } catch (const mqtt::exception &exc) {
       cerr << exc.what() << endl;
       return 1;
