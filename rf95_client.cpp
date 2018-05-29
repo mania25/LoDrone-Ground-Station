@@ -211,6 +211,8 @@ int main(int argc, const char *argv[]) {
 
     last_millis = millis();
 
+    bcm2835_delay(10000);
+
     try {
       cout << "Connecting to the MQTT server..." << flush;
       cli.connect(connOpts);
@@ -265,10 +267,6 @@ int main(int argc, const char *argv[]) {
         // Since we do nothing until each 5 sec
         bcm2835_delay(5);
       }
-
-      cout << "\nDisconnecting from the MQTT server..." << flush;
-      cli.disconnect();
-      cout << "OK" << endl;
     } catch (const mqtt::exception &exc) {
       cerr << exc.what() << endl;
       return 1;
@@ -278,6 +276,11 @@ int main(int argc, const char *argv[]) {
 #ifdef RF_LED_PIN
   digitalWrite(RF_LED_PIN, LOW);
 #endif
+
+  cout << "\nDisconnecting from the MQTT server..." << flush;
+  cli.disconnect();
+  cout << "OK" << endl;
+
   printf("\n%s Ending\n", __BASEFILE__);
   bcm2835_close();
   return 0;
