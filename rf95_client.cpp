@@ -84,13 +84,6 @@ const std::string password =
 
 const int QOS = 1;
 
-mqtt::connect_options connOpts;
-connOpts.set_keep_alive_interval(20);
-connOpts.set_clean_session(true);
-
-connOpts.set_user_name(user.c_str());
-connOpts.set_password(password.c_str());
-
 mqtt::client cli(SERVER_ADDRESS, CLIENT_ID);
 
 using namespace std;
@@ -171,6 +164,12 @@ int main(int argc, const char *argv[]) {
   } else {
     printf("\nRF95 module seen OK!\r\n");
 
+    mqtt::connect_options connOpts;
+    connOpts.set_keep_alive_interval(20);
+    connOpts.set_clean_session(true);
+
+    connOpts.set_user_name(user.c_str());
+    connOpts.set_password(password.c_str());
 #ifdef RF_IRQ_PIN
     // Since we may check IRQ line with bcm_2835 Rising edge detection
     // In case radio already have a packet, IRQ is high and will never
