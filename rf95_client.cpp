@@ -107,7 +107,6 @@ bool try_reconnect(mqtt::client &cli) {
 void sig_handler(int sig) {
   printf("\n%s Break received, exiting!...\n", __BASEFILE__);
   force_exit = true;
-  std::exit(0);
 }
 
 // Main Function
@@ -210,7 +209,7 @@ int main(int argc, const char *argv[]) {
     printf("RF95 node #%d init OK @ %3.2fMHz\n", RF_NODE_ID, RF_FREQUENCY);
 
     last_millis = millis();
-
+    
     bcm2835_delay(10000);
 
     try {
@@ -267,6 +266,10 @@ int main(int argc, const char *argv[]) {
         // Since we do nothing until each 5 sec
         bcm2835_delay(5);
       }
+
+      cout << "\nDisconnecting from the MQTT server..." << flush;
+      cli.disconnect();
+      cout << "OK" << endl;
     } catch (const mqtt::exception &exc) {
       cerr << exc.what() << endl;
       return 1;
@@ -276,11 +279,6 @@ int main(int argc, const char *argv[]) {
 #ifdef RF_LED_PIN
   digitalWrite(RF_LED_PIN, LOW);
 #endif
-
-  cout << "\nDisconnecting from the MQTT server..." << flush;
-  cli.disconnect();
-  cout << "OK" << endl;
-
   printf("\n%s Ending\n", __BASEFILE__);
   bcm2835_close();
   return 0;
